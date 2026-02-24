@@ -731,7 +731,7 @@ function startDlg(id){
   setTimeout(function(){fadeIn(pg(cfg.t,1));},60);
   if(be){
     be.style.animation='none'; be.getBoundingClientRect();
-    be.style.visibility='visible'; be.style.opacity='1';
+    be.style.visibility='visible'; be.style.opacity='0';
     be.style.transformBox='fill-box'; be.style.transformOrigin='center';
     setTimeout(function(){be.style.animation='fade-up-in 0.4s ease forwards, subtle-hover 3s ease-in-out 0.4s infinite';},60);
   }
@@ -750,7 +750,7 @@ function advanceDlg(){
       fadeIn(pg(cfg.t,dlgPage));
       if(be){
         be.style.animation='none'; be.getBoundingClientRect();
-        be.style.visibility='visible'; be.style.opacity='1';
+        be.style.visibility='visible'; be.style.opacity='0';
         be.style.transformBox='fill-box'; be.style.transformOrigin='center';
         be.style.animation='fade-up-in 0.4s ease forwards, subtle-hover 3s ease-in-out 0.4s infinite';
       }
