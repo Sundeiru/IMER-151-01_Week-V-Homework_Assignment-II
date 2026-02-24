@@ -764,7 +764,7 @@ function advanceDlg(){
         setTimeout(function(){
           var ie=document.getElementById(dlgId);
           if(ie){ie.style.transition='opacity 0.6s ease';ie.style.opacity='0';
-            setTimeout(function(){ie.style.visibility='hidden';ie.style.transition='';},660);}
+            setTimeout(function(){ie.style.display='none';ie.style.transition='';},660);}
           var doneId=dlgId;
           collected.add(doneId);
           if(doneId==='stardust-3'){setTimeout(startOutro,750);}
@@ -886,7 +886,7 @@ function resetGame(){
   if(introEl)introEl.style.cssText='';
   ['stardust-1','stardust-2','stardust-3','planet-1','planet-2','black-hole','dying-star'].forEach(function(id){
     var el=document.getElementById(id);
-    if(el){el.style.transition='';el.style.opacity='1';el.style.visibility='visible';}
+    if(el){el.style.transition='';el.style.display='';el.style.opacity='1';el.style.visibility='visible';}
   });
   var rehide=['planet-1-text','planet-2-text','blackhole-text','dyingstar-text',
     'stardust-1-text','stardust-2-text','stardust-3-text',
