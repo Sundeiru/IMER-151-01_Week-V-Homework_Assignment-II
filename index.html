@@ -20,6 +20,8 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 @keyframes fade-up-in{from{opacity:0;transform:translateY(-22px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade-down-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(22px)}}
 @keyframes fade-up-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-30px)}}
+#star foreignObject{display:none}
+@keyframes outro-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 
 </style>
 </head>
@@ -525,7 +527,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 var state='intro', introKeyDone=false;
 var starDX=0, starDY=0;
 var SPEED=5;
-var SX=721.469, SY=507.753;
+var SX=865.469, SY=507.753;
 var keys={ArrowUp:false,ArrowDown:false,ArrowLeft:false,ArrowRight:false};
 var collected=new Set();
 var dlgTransitioning=false, contactCooldown=false;
@@ -772,59 +774,75 @@ function startOutro(){
   var oEl=document.getElementById('outro-text');
   var o1=document.getElementById('outro-text-1');
   var o2=document.getElementById('outro-text-2');
-  /* make parent visible; children start invisible */
   if(oEl){oEl.style.visibility='visible';oEl.style.opacity='1';}
-  if(o1){o1.style.opacity='0';o1.style.transition='none';}
-  if(o2){o2.style.opacity='0';o2.style.transition='none';}
-  /* fade in outro-text-1 */
+  [o1,o2].forEach(function(el){
+    if(!el)return;
+    el.style.transformBox='fill-box';el.style.transformOrigin='center';
+    el.style.pointerEvents='none';el.style.visibility='visible';
+    el.style.opacity='0';el.style.transition='none';
+  });
+  /* ── outro-text-1: fade in 2s → hover → 1s visible → fade out 1s ── */
   setTimeout(function(){
-    if(o1){o1.style.transition='opacity 1.5s ease';o1.style.opacity='1';}
-  },50);
-  /* after 1.5s in + 1s visible: fade out o1, simultaneously fade in o2 */
-  setTimeout(function(){
-    if(o1){o1.style.transition='opacity 1s ease';o1.style.opacity='0';}
-    if(o2){o2.style.transition='opacity 1.5s ease';o2.style.opacity='1';}
-    /* after 1.5s in + 1s visible: fade out o2, then run star sequence */
+    if(o1){o1.style.transition='opacity 2s ease';o1.style.opacity='1';
+      o1.style.animation='outro-hover 6s ease-in-out infinite';}
+    /* 2s fade-in + 1s visible = 3s: start fade out */
     setTimeout(function(){
-      if(o2){o2.style.transition='opacity 1s ease';o2.style.opacity='0';}
+      if(o1){o1.style.transition='opacity 1s ease';o1.style.opacity='0';}
+      /* 1s fade-out done: hide o1, small gap, start o2 */
       setTimeout(function(){
-        starEl.style.transition='opacity 0.3s ease';starEl.style.opacity='0';
-        setTimeout(function(){starEl.style.visibility='hidden';},350);
-        var sp=document.getElementById('star-pass');
-        if(sp){
-          positionSP(sp);
-          sp.style.visibility='visible'; sp.style.transition='opacity 0.3s ease'; sp.style.opacity='1';
-        }
+        if(o1){o1.style.animation='';o1.style.visibility='hidden';}
+        /* ── outro-text-2: same pattern ── */
         setTimeout(function(){
-          var gEl=document.getElementById('glow-overlay');
-          gEl.style.transition='opacity 1s ease'; gEl.style.opacity='0.97';
+          if(o2){o2.style.transition='opacity 2s ease';o2.style.opacity='1';
+            o2.style.animation='outro-hover 6s ease-in-out infinite';}
           setTimeout(function(){
-            gEl.style.transition='opacity 0.7s ease'; gEl.style.opacity='0';
-            if(sp){sp.style.transition='opacity 0.3s ease';sp.style.opacity='0';
-              setTimeout(function(){sp.style.visibility='hidden';},350);}
-            var gx=window.innerWidth/2, gy=window.innerHeight/2;
-            if(sp){try{var rb=sp.getBoundingClientRect();gx=rb.left+rb.width/2;gy=rb.top+rb.height/2;}catch(e){}}
+            if(o2){o2.style.transition='opacity 1s ease';o2.style.opacity='0';}
             setTimeout(function(){
-              glitter(gx,gy);
+              if(o2){o2.style.animation='';o2.style.visibility='hidden';}
+              /* ── 0.5s pause → star-pass sequence ── */
               setTimeout(function(){
-                var bEl=document.getElementById('black-overlay');
-                bEl.style.transition='opacity 1s ease'; bEl.style.opacity='1';
+                starEl.style.transition='none';
+                starEl.style.opacity='0';starEl.style.visibility='hidden';
+                var sp=document.getElementById('star-pass');
+                var gEl=document.getElementById('glow-overlay');
+                if(sp){positionSP(sp);sp.style.visibility='visible';sp.style.opacity='1';sp.style.transition='none';}
+                /* glow phase 1: 0 → 0.6 ("begins to glow really brightly") */
                 setTimeout(function(){
-                  document.getElementById('main-container').style.display='none';
-                  bEl.style.transition='opacity 0.3s ease'; bEl.style.opacity='0';
-                  var rw=document.getElementById('restart-wrapper'); rw.style.display='block';
-                  var rt=document.getElementById('restart-text');
-                  if(rt){rt.style.opacity='0';rt.style.transition='opacity 1.5s ease';
-                    setTimeout(function(){rt.style.opacity='1';setTimeout(function(){state='ended';},1600);},200);}
-                  else setTimeout(function(){state='ended';},500);
-                },1100);
-              },2000);
-            },700);
-          },1400);
-        },500);
-      },1000);
-    },2500);  /* 1.5s o2 fade-in + 1s visible */
-  },2500);    /* 1.5s o1 fade-in + 1s visible */
+                  gEl.style.transition='opacity 0.5s ease';gEl.style.opacity='0.6';
+                  /* glow phase 2: 0.6 → 1.0 ("fills entire screen") */
+                  setTimeout(function(){
+                    gEl.style.transition='opacity 0.5s ease';gEl.style.opacity='1';
+                    /* hold 0.5s at full, then fade glow + hide sp + fire glitter */
+                    setTimeout(function(){
+                      var gx=window.innerWidth/2,gy=window.innerHeight/2;
+                      if(sp){try{var rb=sp.getBoundingClientRect();gx=rb.left+rb.width/2;gy=rb.top+rb.height/2;}catch(e){}}
+                      gEl.style.transition='opacity 0.7s ease';gEl.style.opacity='0';
+                      if(sp){sp.style.visibility='hidden';}
+                      glitter(gx,gy);
+                      /* 2s after glitter → fade to black */
+                      setTimeout(function(){
+                        var bEl=document.getElementById('black-overlay');
+                        bEl.style.transition='opacity 1s ease';bEl.style.opacity='1';
+                        setTimeout(function(){
+                          document.getElementById('main-container').style.display='none';
+                          bEl.style.transition='opacity 0.3s ease';bEl.style.opacity='0';
+                          var rw=document.getElementById('restart-wrapper');rw.style.display='block';
+                          var rt=document.getElementById('restart-text');
+                          if(rt){rt.style.opacity='0';rt.style.transition='opacity 2s ease';
+                            setTimeout(function(){rt.style.opacity='1';setTimeout(function(){state='ended';},2100);},200);}
+                          else setTimeout(function(){state='ended';},500);
+                        },1100);
+                      },2000);
+                    },500);
+                  },500);
+                },100);
+              },500);
+            },1050);
+          },3000);
+        },100);
+      },1050);
+    },3000);
+  },50);
 }
 
 function positionSP(sp){
