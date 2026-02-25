@@ -819,10 +819,10 @@ function startOutro(){
                       gEl.style.transition='opacity 2s ease';gEl.style.opacity='0';
                       if(sp){sp.style.visibility='hidden';}
                       glitter(gx,gy);
-                      /* 2s after glitter → fade to black */
+                      /* 4s after glitter → fade to black */
                       setTimeout(function(){
                         var bEl=document.getElementById('black-overlay');
-                        bEl.style.transition='opacity 1s ease';bEl.style.opacity='1';
+                        bEl.style.transition='opacity 2s ease';bEl.style.opacity='1';
                         setTimeout(function(){
                           document.getElementById('main-container').style.display='none';
                           bEl.style.transition='opacity 0.3s ease';bEl.style.opacity='0';
@@ -831,9 +831,9 @@ function startOutro(){
                           if(rt){rt.style.opacity='0';rt.style.transition='opacity 2s ease';
                             setTimeout(function(){rt.style.opacity='1';setTimeout(function(){state='ended';},2100);},200);}
                           else setTimeout(function(){state='ended';},500);
-                        },1100);
-                      },2000);
-                    },2000);
+                        },2200);
+                      },4000);
+                    },100);
                   },2000);
                 },100);
               },500);
