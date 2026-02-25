@@ -7,7 +7,8 @@
 <style>
 
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;padding:0;background:#000;overflow-x:hidden}
+html,body{margin:0;padding:0;background:#000;overflow:hidden}
+#main-container{position:fixed;top:0;left:0;width:100%}
 #main-container svg{display:block;width:100%;height:auto}
 #glow-overlay{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:100;
   background:radial-gradient(circle at 50% 50%,#fffbe8 0%,#ffe680 25%,#ffaa00 55%,rgba(255,80,0,0) 90%)}
@@ -26,7 +27,7 @@ body{margin:0;padding:0;background:#000;overflow-x:hidden}
 <div id="main-container">
 <svg width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1440 31107" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="setup" clip-path="url(#clip0_28_22)">
-<g id="phone-frame" filter="url(#filter0_fn_28_22)">
+<g id="phone-frame">
 <rect width="1440" height="31107" fill="url(#paint0_linear_28_22)"/>
 </g>
 <g id="asteroid-1">
@@ -555,8 +556,7 @@ var CFGS={
 
 var CONTACT_IDS=['stardust-1','stardust-2','black-hole','planet-2','planet-1','dying-star','stardust-3'];
 var COLL_IDS=['barrier','barrier_2','barrier_3','barrier_4','barrier_5',
-              'barrier_6','barrier_7','barrier_8','barrier_9',
-              'boundary','boundary_2','boundary_3','planet-2'];
+              'barrier_6','barrier_7','barrier_8','barrier_9'];
 
 /* ---- INIT ---- */
 function init(){
@@ -626,8 +626,9 @@ function loop(){
     var dx=0,dy=0;
     if(keys.ArrowLeft)dx-=SPEED; if(keys.ArrowRight)dx+=SPEED;
     if(keys.ArrowUp)dy-=SPEED;   if(keys.ArrowDown)dy+=SPEED;
-    if(dx||dy){tryMove(dx,dy);autoScroll();}
+    if(dx||dy){tryMove(dx,dy);}
     checkContacts();
+    autoScroll();
   }
   requestAnimationFrame(loop);
 }
@@ -654,10 +655,9 @@ function collides(){
 
 /* ---- AUTO SCROLL ---- */
 function autoScroll(){
-  var r=starEl.getBoundingClientRect();
-  var sy=r.top+r.height/2, target=window.innerHeight*0.42;
-  var d=sy-target;
-  if(Math.abs(d)>40)window.scrollBy({top:d*0.12,behavior:'auto'});
+  var scale=window.innerWidth/1440;
+  var ty=window.innerHeight*0.42-(SY+starDY)*scale;
+  document.getElementById('main-container').style.transform='translateY('+ty+'px)';
 }
 
 /* ---- CONTACT DETECTION ---- */
@@ -902,7 +902,7 @@ function resetGame(){
     eggEl.style.transformBox='fill-box'; eggEl.style.transformOrigin='center';
     eggEl.style.animation='subtle-hover 4s ease-in-out infinite';
   }
-  window.scrollTo(0,0);
+  autoScroll();
 }
 
 /* ---- BOOT ---- */
