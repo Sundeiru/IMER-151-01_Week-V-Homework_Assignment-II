@@ -29,7 +29,7 @@ html,body{margin:0;padding:0;background:#000;overflow:hidden}
 <div id="main-container">
 <svg width="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1728 31107" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="setup" clip-path="url(#clip0_28_22)">
-<g id="phone-frame">
+<g id="phone-frame" filter="url(#filter0_fn_28_22)">
 <rect width="1728" height="31107" transform="translate(3)" fill="url(#paint0_linear_28_22)"/>
 </g>
 <g id="asteroid-1">
@@ -808,15 +808,15 @@ function startOutro(){
                 if(sp){positionSP(sp);sp.style.visibility='visible';sp.style.opacity='1';sp.style.transition='none';}
                 /* glow phase 1: 0 → 0.6 ("begins to glow really brightly") */
                 setTimeout(function(){
-                  gEl.style.transition='opacity 0.5s ease';gEl.style.opacity='0.6';
+                  gEl.style.transition='opacity 2s ease';gEl.style.opacity='0.6';
                   /* glow phase 2: 0.6 → 1.0 ("fills entire screen") */
                   setTimeout(function(){
-                    gEl.style.transition='opacity 0.5s ease';gEl.style.opacity='1';
+                    gEl.style.transition='opacity 2s ease';gEl.style.opacity='1';
                     /* hold 0.5s at full, then fade glow + hide sp + fire glitter */
                     setTimeout(function(){
                       var gx=window.innerWidth/2,gy=window.innerHeight/2;
                       if(sp){try{var rb=sp.getBoundingClientRect();gx=rb.left+rb.width/2;gy=rb.top+rb.height/2;}catch(e){}}
-                      gEl.style.transition='opacity 0.7s ease';gEl.style.opacity='0';
+                      gEl.style.transition='opacity 2s ease';gEl.style.opacity='0';
                       if(sp){sp.style.visibility='hidden';}
                       glitter(gx,gy);
                       /* 2s after glitter → fade to black */
@@ -833,8 +833,8 @@ function startOutro(){
                           else setTimeout(function(){state='ended';},500);
                         },1100);
                       },2000);
-                    },500);
-                  },500);
+                    },2000);
+                  },2000);
                 },100);
               },500);
             },1050);
@@ -878,14 +878,14 @@ function glitter(cx,cy){
     var alive=false;
     pts.forEach(function(p){
       p.x+=p.vx; p.y+=p.vy; p.vx*=0.97; p.vy*=0.97;
-      p.op-=0.007; p.phase+=0.18;
+      p.op-=0.003; p.phase+=0.08;
       if(p.op<=0)return; alive=true;
       var twinkle=Math.max(0,p.op*(0.6+0.4*Math.sin(p.phase)));
       ctx.save(); ctx.globalAlpha=Math.max(0,twinkle);
       ctx.fillStyle='hsl('+p.hue+',100%,'+(68+Math.random()*22)+'%)';
       star4(ctx,p.x,p.y,p.sz*1.6,p.sz*0.55); ctx.restore();
     });
-    if(alive&&fr<220)requestAnimationFrame(draw);
+    if(alive&&fr<400)requestAnimationFrame(draw);
     else{cv.style.display='none';ctx.clearRect(0,0,cv.width,cv.height);}
   }
   draw();
