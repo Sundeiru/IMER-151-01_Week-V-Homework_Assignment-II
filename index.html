@@ -880,7 +880,12 @@ function startOutro(){
                           var rw=document.getElementById('restart-wrapper');rw.style.display='block';
                           var rt=document.getElementById('restart-text');
                           if(rt){rt.style.opacity='0';rt.style.transition='opacity 2s ease';
-                            setTimeout(function(){rt.style.opacity='1';setTimeout(function(){state='ended';},2100);},200);}
+                            setTimeout(function(){
+                              rt.style.opacity='1';
+                              fadeVol(bgTrack,bgTrack.volume,0,2000);
+                              fadeVol(fgTrack,fgTrack.volume,0,2000);
+                              setTimeout(function(){state='ended';},2100);
+                            },200);}
                           else setTimeout(function(){state='ended';},500);
                         },2200);
                       },4000);
