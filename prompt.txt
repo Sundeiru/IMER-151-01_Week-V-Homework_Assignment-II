@@ -30,3 +30,15 @@ Interaction:
 {outro-text} fades into view slowly. It hovers up and down slowly and subtly. After four seconds, {outro-text} fades away. After 0.5 seconds, {star} is hidden and {star-pass} is visible at the exact same location as {star} currently is. {star-pass} begins to glow really brightly, and then it glows so brightly that the glow fills the entire screen. After 0.5 seconds, the glow over the screen fades away, and {star-pass} is hidden. Where {star-pass} was, a star glitter effect is seen.
 
 • After two seconds, the screen fades to black. {setup} is hidden and {restart} is visible. {restart-text} gradually fades into view, and once it fully fades in: if the user clicks any key or mouse, the interaction resets.
+
+
+Sound Update:
+Five .wav files have been added to main. Please follow the instructions accordingly to properly implement them:
+
+• Background_Track.wav and Foreground_Track.wav play simulatenously in the background from the start of the interaction, and they are set to loop. Foreground_Track.wav plays over Background_Track.wav; Background_Track.wav is a little quieter than Foreground_Track.wav.
+
+• When {stardust-1}, {stardust-2}, and {stardust-3} start fading away, Stardust_Collect.wav plays. The volume of Background_Track.wav and Foreground_Track.wav is lowered while Stardust_Collect.wav is playing, and the volume is set back to its normal value once Stardust_Collect.wav is done.
+
+• When {planet-1}, {planet-2}, {dying-star}, and {black-hole} start to fade away, Dark_Collect.wav plays. Dark_Collect.wav plays. The volume of Background_Track.wav and Foreground_Track.wav is lowered while Dark_Collect.wav is playing, and the volume is set back to its normal value once Dark_Collect.wav is done.
+
+• When {outro-text} plays, then the volume of Foreground_Track.wav and Background_Track.wav starts fading away over the duration that {outro-text} is playing. They descend to a volume that is quiet but still audible. When {star-pass} glows, then Star_Disappear.wav plays.
