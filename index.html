@@ -551,6 +551,22 @@ var CONTACT_IDS=['stardust-1','stardust-2','black-hole','planet-2','planet-1','d
 var COLL_IDS=['barrier','barrier_2','barrier_3','barrier_4','barrier_5',
               'barrier_6','barrier_7','barrier_8','barrier_9'];
 
+/* ---- AUDIO ---- */
+var BG_NORMAL=0.55, FG_NORMAL=0.80;
+var DUCK_BG=0.20, DUCK_FG=0.30;
+var OUTRO_BG=0.10, OUTRO_FG=0.15;
+var audioStarted=false;
+
+var bgTrack=new Audio('Background_Track.wav');
+bgTrack.loop=true; bgTrack.volume=BG_NORMAL;
+
+var fgTrack=new Audio('Foreground_Track.wav');
+fgTrack.loop=true; fgTrack.volume=FG_NORMAL;
+
+var stardustSnd=new Audio('Stardust_Collect.wav');
+var darkSnd=new Audio('Dark_Collect.wav');
+var starDisappearSnd=new Audio('Star_Disappear.wav');
+
 /* ---- INIT ---- */
 function init(){
   starEl=document.getElementById('star');
@@ -604,6 +620,11 @@ function onKeyUp(e){if(isArrow(e.key))keys[e.key]=false;}
 
 /* ---- DISMISS INTRO ---- */
 function dismissIntro(){
+  if(!audioStarted){
+    audioStarted=true;
+    bgTrack.play().catch(function(){});
+    fgTrack.play().catch(function(){});
+  }
   if(!introEl){state='playing';return;}
   introEl.style.transformBox='fill-box';introEl.style.transformOrigin='center';
   introEl.style.transition='opacity 0.6s ease, transform 0.6s ease';
@@ -713,6 +734,26 @@ function fadeOut(el,cb){
     el.style.animation=''; if(cb)cb();
   },340);
 }
+function fadeVol(audio,from,to,duration,cb){
+  var start=Date.now();
+  var id=setInterval(function(){
+    var t=Math.min((Date.now()-start)/duration,1);
+    audio.volume=from+(to-from)*t;
+    if(t>=1){clearInterval(id);if(cb)cb();}
+  },30);
+  return id;
+}
+function duckAndRestore(snd){
+  var prevBg=bgTrack.volume, prevFg=fgTrack.volume;
+  fadeVol(bgTrack,prevBg,DUCK_BG,300);
+  fadeVol(fgTrack,prevFg,DUCK_FG,300);
+  snd.currentTime=0;
+  snd.play().catch(function(){});
+  snd.onended=function(){
+    fadeVol(bgTrack,bgTrack.volume,prevBg,500);
+    fadeVol(fgTrack,fgTrack.volume,prevFg,500);
+  };
+}
 
 function startDlg(id){
   state='dialogue'; dlgId=id; dlgPage=1; dlgTransitioning=false;
@@ -759,6 +800,10 @@ function advanceDlg(){
           if(ie){ie.style.transition='opacity 0.6s ease';ie.style.opacity='0';
             setTimeout(function(){ie.style.display='none';ie.style.transition='';},660);}
           var doneId=dlgId;
+          var STARDUST_IDS=['stardust-1','stardust-2','stardust-3'];
+          var DARK_IDS=['planet-1','planet-2','dying-star','black-hole'];
+          if(STARDUST_IDS.indexOf(doneId)!==-1)duckAndRestore(stardustSnd);
+          else if(DARK_IDS.indexOf(doneId)!==-1)duckAndRestore(darkSnd);
           collected.add(doneId);
           if(doneId==='stardust-3'){setTimeout(startOutro,750);}
           else{setTimeout(function(){state='playing';contactCooldown=false;dlgTransitioning=false;},700);}
@@ -771,6 +816,10 @@ function advanceDlg(){
 /* ---- OUTRO ---- */
 function startOutro(){
   state='outro';
+  setTimeout(function(){
+    fadeVol(bgTrack,bgTrack.volume,OUTRO_BG,8700);
+    fadeVol(fgTrack,fgTrack.volume,OUTRO_FG,8700);
+  },50);
   var oEl=document.getElementById('outro-text');
   var o1=document.getElementById('outro-text-1');
   var o2=document.getElementById('outro-text-2');
@@ -809,6 +858,8 @@ function startOutro(){
                 /* glow phase 1: 0 → 0.6 ("begins to glow really brightly") */
                 setTimeout(function(){
                   gEl.style.transition='opacity 2s ease';gEl.style.opacity='0.6';
+                  starDisappearSnd.currentTime=0;
+                  starDisappearSnd.play().catch(function(){});
                   /* glow phase 2: 0.6 → 1.0 ("fills entire screen") */
                   setTimeout(function(){
                     gEl.style.transition='opacity 2s ease';gEl.style.opacity='1';
@@ -829,7 +880,12 @@ function startOutro(){
                           var rw=document.getElementById('restart-wrapper');rw.style.display='block';
                           var rt=document.getElementById('restart-text');
                           if(rt){rt.style.opacity='0';rt.style.transition='opacity 2s ease';
-                            setTimeout(function(){rt.style.opacity='1';setTimeout(function(){state='ended';},2100);},200);}
+                            setTimeout(function(){
+                              rt.style.opacity='1';
+                              fadeVol(bgTrack,bgTrack.volume,0,2000);
+                              fadeVol(fgTrack,fgTrack.volume,0,2000);
+                              setTimeout(function(){state='ended';},2100);
+                            },200);}
                           else setTimeout(function(){state='ended';},500);
                         },2200);
                       },4000);
